@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database.connection import get_db
+from app.schemas.alert_schema import AlertCreate, AlertResponse
 from app.services.alert_service import AlertService
 
 router = APIRouter(
@@ -15,21 +16,21 @@ def get_alert_service(db: Session = Depends(get_db)):
     return AlertService(db)
 
 
-@router.get("/")
+@router.get("/", response_model=list[AlertResponse])
 def get_all_alerts(
         service: AlertService = Depends(get_alert_service)
 ):
     return service.get_all_alerts()
 
 
-@router.get("/unread")
+@router.get("/unread", response_model=list[AlertResponse])
 def get_unread_alerts(
         service: AlertService = Depends(get_alert_service)
 ):
     return service.get_unread_alerts()
 
 
-@router.get("/budget/{budget_id}")
+@router.get("/budget/{budget_id}", response_model=list[AlertResponse])
 def get_alerts_by_budget(
         budget_id: int,
         service: AlertService = Depends(get_alert_service)
@@ -37,7 +38,7 @@ def get_alerts_by_budget(
     return service.get_alerts_by_budget(budget_id)
 
 
-@router.get("/{alert_id}")
+@router.get("/{alert_id}", response_model=AlertResponse)
 def get_alert_by_id(
         alert_id: int,
         service: AlertService = Depends(get_alert_service)
@@ -50,12 +51,12 @@ def get_alert_by_id(
     return alert
 
 
-@router.post("/", status_code=201)
+@router.post("/", status_code=201, response_model=AlertResponse)
 def create_alert(
-        alert_data: dict,
+        alert_data: AlertCreate,
         service: AlertService = Depends(get_alert_service)
 ):
-    alert = service.create_alert(alert_data)
+    alert = service.create_alert(alert_data.model_dump(exclude_unset=True))
 
     if alert is None:
         raise HTTPException(status_code=404, detail="Budget not found")
@@ -63,7 +64,7 @@ def create_alert(
     return alert
 
 
-@router.put("/{alert_id}/read")
+@router.put("/{alert_id}/read", response_model=AlertResponse)
 def mark_alert_as_read(
         alert_id: int,
         service: AlertService = Depends(get_alert_service)

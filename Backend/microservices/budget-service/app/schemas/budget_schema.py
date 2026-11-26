@@ -12,6 +12,7 @@ class _BudgetBase(BaseModel):
     # validate_default  : applique aussi cette conversion aux valeurs par défaut
     # str_strip_whitespace : enlève les espaces au début et à la fin des textes
     model_config = ConfigDict(
+        extra="forbid",
         use_enum_values=True,
         validate_default=True,
         str_strip_whitespace=True,
@@ -94,4 +95,4 @@ class BudgetSummaryResponse(BudgetResponse):
 
     consumed_amount: Decimal       # somme des dépenses APPROVED
     remaining_amount: Decimal      # total_amount - consumed_amount (peut être négatif)
-    consumption_percent: Decimal   # consumed_amount / total_amount * 100
+    consumed_percentage: float      # consumed_amount / total_amount * 100

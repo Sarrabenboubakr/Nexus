@@ -71,9 +71,17 @@ class BudgetService:
 
         return {
             "budget_id": budget.id,
+            "id": budget.id,
+            "project_id": budget.project_id,
+            "organization_id": budget.organization_id,
             "total_amount": budget.total_amount,
+            "currency": budget.currency,
+            "status": budget.status,
+            "start_date": budget.start_date,
+            "end_date": budget.end_date,
+            "created_at": budget.created_at,
+            "updated_at": budget.updated_at,
             "consumed_amount": consumed,
             "remaining_amount": remaining,
             "consumed_percentage": round(percentage, 2),
-            "currency": budget.currency
         }
